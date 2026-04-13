@@ -32,7 +32,7 @@ class TestStartGame:
         response = client.post("/start")
         assert response.status_code == 200
         assert "FREE SPACE" in response.text
-        assert "← Back" in response.text
+        assert "← BACK" in response.text
 
     def test_board_has_25_squares(self, client: TestClient):
         client.get("/")
