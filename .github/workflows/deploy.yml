@@ -33,29 +33,21 @@ jobs:
 
       - name: Prepare deployment
         run: |
+          set -e
           mkdir -p ./_site/app/static
 
+          # Copy docs (lab guide pages) to _site root
           cp -r docs/* ./_site/
+
+          # Copy static assets
           cp -r app/static/* ./_site/app/static/
 
-          uv run python -c "
-          from jinja2 import Environment, FileSystemLoader
-          from app.models import GameState
-          from app.game_service import GameSession
+          # Generate the game home page as static HTML
+          uv run python scripts/build_static.py
 
-          REPO = '2026-04-11-FIAP-lab-python'
-
-          env = Environment(loader=FileSystemLoader('app/templates'))
-          session = GameSession()
-          template = env.get_template('home.html')
-          full_html = template.render(
-              session=session,
-              GameState=GameState,
-              url_for=lambda name, path='': f'/{REPO}/app/static/{path}' if name == 'static' else path,
-          )
-          with open('_site/index.html', 'w') as f:
-              f.write(full_html)
-          "
+          # Validate the generated file exists and has content
+          echo "--- Generated index.html (first 10 lines) ---"
+          head -10 ./_site/index.html
 
           touch ./_site/.nojekyll
 
