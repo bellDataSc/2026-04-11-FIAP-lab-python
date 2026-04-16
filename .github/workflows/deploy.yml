@@ -43,13 +43,15 @@ jobs:
           from app.models import GameState
           from app.game_service import GameSession
 
+          REPO = '2026-04-11-FIAP-lab-python'
+
           env = Environment(loader=FileSystemLoader('app/templates'))
           session = GameSession()
           template = env.get_template('home.html')
           full_html = template.render(
               session=session,
               GameState=GameState,
-              url_for=lambda name, path='': f'/agent-lab-python/app/static/{path}' if name == 'static' else path,
+              url_for=lambda name, path='': f'/{REPO}/app/static/{path}' if name == 'static' else path,
           )
           with open('_site/index.html', 'w') as f:
               f.write(full_html)
